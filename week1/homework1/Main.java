@@ -69,13 +69,17 @@ public class Main {
         int left = 0;
         int right = keys.size() - 1;
 
+        // ArrayList<String> anagrams = new ArrayList<>();
+
         while (left <= right) {
             int mid = left + (right - left) / 2;
             String midWord = keys.get(mid);
             // System.out.println("Checking mid: " + midWord + " at position " + mid);
 
             if (midWord.equals(word)) {
-                return ("Found: " + word + " -> " + dict.get(midWord));
+                return ("Found: " + dict.get(midWord));
+                // anagrams.add(dict.get(midWord));
+                // continue;
             } else if (midWord.compareTo(word) < 0) {
                 left = mid + 1;
             } else {
