@@ -1,4 +1,4 @@
-package week1.hw1_all;
+package week1.hw2;
  
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -44,8 +44,6 @@ public class Main {
             dict.computeIfAbsent(sortedWord, k -> new ArrayList<>()).add(line);
         }
 
-        // ❗️ getOrDefaultを使うと、キーが存在しない場合にデフォルト値を返すことができる。
-
         // System.out.println("Dictionary created with " + dict + " unique sorted words.");
 
         // ソートされた辞書を作成するために、キーをソートする
@@ -57,10 +55,6 @@ public class Main {
         }
 
         return sortedDict;
-        // ❓ なぜソートされた順番でputしているのに、dictがkeyでソートされないのか?
-        // 💡 LinkedHashMapを使うと、挿入順序を保持することができる。
-        // System.out.println("Sorted Dictionary: " + sortedDict);
-
 
     }
 

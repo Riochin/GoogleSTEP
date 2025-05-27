@@ -10,10 +10,13 @@ public class Test {
     public static void main(String[] args) throws FileNotFoundException {
         //❓ いちいちここでHashmap作るのは大変
         //💡 ファイルから辞書を作成するようにする
-        Scanner sc = new Scanner(new File("words.txt")); // ファイル名を書き換える
+        Scanner sc = new Scanner(new File("testwords.txt")); // ファイル名を書き換える
         HashMap<String, ArrayList<String>> dict = Main.makeSortedDict(sc);
         sc.close();
-
+        
+        // ❗️ javaでテストしない方法もある
+        // ❗️ テスト自体も関数にしちゃう public void
+        // ❗️ assert
         // テストケース
         System.out.println("=== Test 1 ===");
         Main.solution("abnana", dict);
