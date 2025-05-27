@@ -1,4 +1,4 @@
-package week1.homework1;
+package week1.hw1_all;
  
 import java.util.Scanner;
 import java.util.ArrayList;
