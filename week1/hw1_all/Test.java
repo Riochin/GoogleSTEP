@@ -4,13 +4,14 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Test {
     public static void main(String[] args) throws FileNotFoundException {
         //❓ いちいちここでHashmap作るのは大変
         //💡 ファイルから辞書を作成するようにする
-        Scanner sc = new Scanner(new File("testwords.txt")); // ファイル名を書き換える
-        HashMap<String, String> dict = Main.makeSortedDict(sc);
+        Scanner sc = new Scanner(new File("words.txt")); // ファイル名を書き換える
+        HashMap<String, ArrayList<String>> dict = Main.makeSortedDict(sc);
         sc.close();
 
         // テストケース

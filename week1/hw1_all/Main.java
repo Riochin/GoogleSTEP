@@ -3,57 +3,63 @@ package week1.hw1_all;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 // ❓ テストがしやすい設計が難しい。makeSortedDictの引数にScannerを渡すのは、テストしにくい。
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        HashMap<String, String> dict = makeSortedDict(sc);
+        HashMap<String, ArrayList<String>> dict = makeSortedDict(sc);
         sc.close();
 
         solution("abnana", dict);
 
     }
 
-    public static void solution(String randomWord, HashMap<String, String> dict) {
+    public static void solution(String randomWord, HashMap<String, ArrayList<String>> dict) {
         System.out.println("Random Word: " + randomWord);
         String sortedWord = sortRandomWord(randomWord);
-        String result = binarySearch(sortedWord, dict);
 
-        System.out.println(result);
+        int index = binarySearch(sortedWord, dict);
+        if (index == -1) {
+            System.out.println("Word not found in dictionary.");
+            System.out.println();
+            return;
+        }
+        ArrayList<String> anagrams = findAnagrams(sortedWord, dict);
+
+        System.out.print("Found anagrams: ");
+        for(String s : anagrams) {
+            System.out.print(s + " ");
+        }
+        System.out.println();
+        System.out.println();
     }
 
-    public static HashMap<String, String> makeSortedDict(Scanner sc) {
-        HashMap<String, String> dict = new HashMap<>();
+    public static HashMap<String, ArrayList<String>> makeSortedDict(Scanner sc) {
+        HashMap<String, ArrayList<String>> dict = new HashMap<>();
         while(sc.hasNextLine()){
             String line = sc.nextLine();
-            
-            dict.put(line, line);
-        }
-        
-        ArrayList<String> originalKeys = new ArrayList<>(dict.keySet());
-        for (String word: originalKeys){
-            String sortedWord = sortRandomWord(word);
-            dict.remove(word);
-            dict.put(sortedWord, word);
+            String sortedWord = sortRandomWord(line);
+            dict.computeIfAbsent(sortedWord, k -> new ArrayList<>()).add(line);
         }
 
-        Object[] keys = dict.keySet().toArray();
-        Arrays.sort(keys);
-        
-        LinkedHashMap<String, String> sortedDict = new LinkedHashMap<>();
-        for (Object keyObj : keys) {
-            String key = (String) keyObj;
+        // System.out.println("Dictionary created with " + dict + " unique sorted words.");
+
+        // ソートされた辞書を作成するために、キーをソートする
+        ArrayList<String> sortedKeys = new ArrayList<>(dict.keySet());
+        sortedKeys.sort(String::compareTo);
+        HashMap<String, ArrayList<String>> sortedDict = new LinkedHashMap<>();
+        for (String key : sortedKeys) {
             sortedDict.put(key, dict.get(key));
         }
 
+        return sortedDict;
         // ❓ なぜソートされた順番でputしているのに、dictがkeyでソートされないのか?
         // 💡 LinkedHashMapを使うと、挿入順序を保持することができる。
         // System.out.println("Sorted Dictionary: " + sortedDict);
 
-        return sortedDict;
+
     }
 
 
@@ -63,13 +69,11 @@ public class Main {
         return new String(chars);
     }
 
-    public static String binarySearch(String word, HashMap<String,String> dict) {
+    public static int binarySearch(String word, HashMap<String,ArrayList<String>> dict) {
         ArrayList<String> keys = new ArrayList<>(dict.keySet());
 
         int left = 0;
         int right = keys.size() - 1;
-
-        // ArrayList<String> anagrams = new ArrayList<>();
 
         while (left <= right) {
             int mid = left + (right - left) / 2;
@@ -77,16 +81,18 @@ public class Main {
             // System.out.println("Checking mid: " + midWord + " at position " + mid);
 
             if (midWord.equals(word)) {
-                return ("Found: " + dict.get(midWord));
-                // anagrams.add(dict.get(midWord));
-                // continue;
+                return mid;
             } else if (midWord.compareTo(word) < 0) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
-        return ("Not Found: " + word);
+        return (-1);
 
+    }
+
+    public static ArrayList<String> findAnagrams(String word, HashMap<String, ArrayList<String>> dictionary) {
+        return dictionary.getOrDefault(word, new ArrayList<>());
     }
 }
