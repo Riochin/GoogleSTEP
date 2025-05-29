@@ -9,7 +9,7 @@ public class Test {
     public static void main(String[] args) throws FileNotFoundException {
         //❓ いちいちここでHashmap作るのは大変
         //💡 ファイルから辞書を作成するようにする
-        Scanner sc = new Scanner(new File("testwords.txt")); // ファイル名を書き換える
+        Scanner sc = new Scanner(new File("input/testwords.txt")); // ファイル名を書き換える
         HashMap<String, String> dict = Main.makeSortedDict(sc);
         sc.close();
 
