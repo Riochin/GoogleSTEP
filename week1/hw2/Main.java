@@ -99,20 +99,25 @@ public class Main {
 
     public static HashMap<String, int[]> makeAlphaDict(ArrayList<String> words){
         HashMap<String, int[]> alphaDict = new HashMap<>();
-        char alpha = 'z';
 
         for(int i=0;i<words.size();i++){
             String word = words.get(i);
-            int[] alphabets = new int[26];
-
-            for(int j=0;j<word.length();j++){
-                alphabets[alpha - word.charAt(j)] ++ ;
-            }
+            int[] alphabets = makeLetterArray(word);
 
             String sortedWord = sortRandomWord(word);
             alphaDict.put(sortedWord, alphabets);
         }
 
         return alphaDict;
+    }
+
+    public static int[] makeLetterArray(String word){
+        int[] alphabets = new int[26];
+
+        for(int j=0;j<word.length();j++){
+            alphabets['z' - word.charAt(j)] ++ ;
+        }
+
+        return alphabets;   
     }
 }
