@@ -28,20 +28,18 @@ ArrayList<ArrayList<Integer>>
 ## いつまでやる？
 全部見ずに済む方法があれば良い（考える）
 
-## ✍️ アルファベットの配列を作るとき
+## ✍️ 文字列の頻度配列は`char`の引き算で簡潔に書ける
 `a.java`参照
-- `'z' - 'z'` = 0
-- `'z' - 'a'` = 25
-というように、char同士で引き算ができる！（ASCII）
-これでわざわざハッシュマップ作って
 ```
-if (word.charAt(i).equals("a")){
-    alphas.get("a")++;
-} else if(word.charAt(i).equals("b)){
-    ...
+int[] freq = new int[26];
+for (char c : word.toCharArray()) {
+    freq['z' - c]++;
 }
 ```
-みたいなことしなくて良い！（学び）
+
+- `'z' - 'z'` = 0, `'z' - 'a'` = 25
+というように、char同士で引き算ができる！（ASCII）
+- わざわざHashMap作らなくて良いので早い。
 ---
 
 # 一回提出、larggeの実行時間が10分かかった...
@@ -61,6 +59,7 @@ for(int i=0;i<words.size();i++){
 - `entrySet()を使った`
 - 📌 https://qiita.com/neras_1215/items/e756089312bbd6c353a9
 - 便利すぎる。keySetから拾ってくるしかないのかと思ってた。
+- このあと結局HashMap自体使うのやめたw
 
 ```
 // 💡： これは無くして、`(Map.Entry<String, int[]> entry : alphaDict.entrySet()`でループ回せる
@@ -71,3 +70,36 @@ for(int i=0;i<words.size();i++){
             ...
         }
 ```
+
+- 🌟 `WordInfo` クラスを作った
+辞書の前処理段階で単語情報をオブジェクトにまとめたので、後続処理を高速化できた！
+  - `word`: ソートずみ単語名（aaelp, aegprなどが入る） //nameとかでも良かったかも
+  - `freq`: 各アルファベットの出現回数
+  - `score`: スコア
+  - `originWords`: aelp -> [leap, pale]みたいな感じで元々のワードが
+
+  ```
+  public class WordInfo{
+    String word;
+    int[] freq;
+    int score;
+    List<String> originalWords = new ArrayList<>();
+
+    WordInfo(String word){
+        this.word = word;
+        this.freq = Main.makeLetterArray(word);
+        this.score = ScoreChecker.calculateScore(word);
+    }
+  }
+  ```
+
+  - 補助関数 `canMake()`を作った
+  ```
+  public static boolean canMake(int[] wordFreq, int[] inputFreq) {
+    for (int i = 0; i < 26; i++) {
+        if (wordFreq[i] > inputFreq[i]) return false;
+    }
+    return true;
+}
+  ```
+    - 多分計算量には影響なし？
