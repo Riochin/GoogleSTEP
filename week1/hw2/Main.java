@@ -3,34 +3,34 @@ package week1.hw2;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.List;
 
 // ❓ score_checker.pyってjavaで実装しないといけない系？？
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        HashMap<String, ArrayList<String>> dict = makeSortedDict(sc);
+        List<WordInfo> dict = makeDict(sc);
         sc.close();
 
         solution("abnana", dict);
 
     }
 
-    public static void solution(String randomWord, HashMap<String, ArrayList<String>> dict) {
-        String sortedWord = sortRandomWord(randomWord);
-        ArrayList<String> words = new ArrayList<>(dict.keySet());
-        HashMap<String, int[]> alphaDict = makeAlphaDict(words);
-        ArrayList<String> anagrams = findAnagrams(sortedWord, alphaDict);
-        ArrayList<String> origins = findAnagramOrigins(anagrams, dict);
-
-        // スコア最大の単語を1つだけ出力
+    public static void solution(String randomWord, List<WordInfo> dict) {
         String bestWord = null;
         int bestScore = -1;
-        for (String s : origins) {
-            int score = ScoreChecker.calculateScore(s);
-            if (score > bestScore) {
-                bestScore = score;
-                bestWord = s;
+
+        String sortedWord = sortRandomWord(randomWord);
+        // ArrayList<String> words = new ArrayList<>(dict.keySet());
+        // HashMap<String, int[]> alphaDict = makeAlphaDict(words);
+        ArrayList<WordInfo> anagrams = findAnagrams(sortedWord, dict);
+
+        // スコア最大の単語を1つだけ出力
+        for (WordInfo wi : anagrams) {
+            if (wi.score > bestScore) {
+                bestScore = wi.score;
+                bestWord = wi.originalWords.get(0);
             }
         }
         if (bestWord != null) {
@@ -40,25 +40,19 @@ public class Main {
         }
     }
 
-    public static HashMap<String, ArrayList<String>> makeSortedDict(Scanner sc) {
-        HashMap<String, ArrayList<String>> dict = new HashMap<>();
+    public static List<WordInfo> makeDict(Scanner sc) {
+        List<WordInfo> dict = new ArrayList<>();
+        Map<String, WordInfo> tempMap = new HashMap<>();
+
         while(sc.hasNextLine()){
-            String line = sc.nextLine();
-            String sortedWord = sortRandomWord(line);
-            dict.computeIfAbsent(sortedWord, k -> new ArrayList<>()).add(line);
+            String word = sc.nextLine();
+            String sortedWord = sortRandomWord(word);
+            WordInfo wi = tempMap.computeIfAbsent(sortedWord, k -> new WordInfo(sortedWord));
+            wi.originalWords.add(word);
         }
 
-        // System.out.println("Dictionary created with " + dict + " unique sorted words.");
-
-        // ソートされた辞書を作成するために、キーをソートする
-        ArrayList<String> sortedKeys = new ArrayList<>(dict.keySet());
-        sortedKeys.sort(String::compareTo);
-        HashMap<String, ArrayList<String>> sortedDict = new LinkedHashMap<>();
-        for (String key : sortedKeys) {
-            sortedDict.put(key, dict.get(key));
-        }
-
-        return sortedDict;
+        dict.addAll(tempMap.values()); // ★忘れず追加
+        return dict;
 
     }
 
@@ -69,27 +63,30 @@ public class Main {
         return new String(chars);
     }
 
-    public static ArrayList<String> findAnagrams(String target, HashMap<String, int[]> alphaDict){
+    public static ArrayList<WordInfo> findAnagrams(String target, List<WordInfo> dict){
         int[] targetLetters = makeLetterArray(target);
-        ArrayList<String> keys = new ArrayList<>(alphaDict.keySet());
-        ArrayList<String> anagrams = new ArrayList<>();
+        // 💡： 👇は無くして、`(Map.Entry<String, int[]> entry : alphaDict.entrySet()`でループ回せる
+        // ArrayList<String> keys = new ArrayList<>(alphaDict.keySet());
+        ArrayList<WordInfo> anagrams = new ArrayList<>();
 
-        for (int i=0;i<alphaDict.size();i++){
-            boolean isBroken = false;
-            for(int a=0;a<26;a++){
-                if(targetLetters[a] < alphaDict.get(keys.get(i))[a]){
-                    isBroken = true;
-                    break;
-                }
+        for (WordInfo wi : dict) {
+            if (canMake(wi.freq, targetLetters)) {
+                anagrams.add(wi);
             }
-            if(isBroken)continue;
-            anagrams.add(keys.get(i));
         }
 
         return anagrams;
     }
 
-    public static ArrayList<String> findAnagramOrigins(ArrayList<String> words, HashMap<String, ArrayList<String>> dictionary) {
+    public static boolean canMake(int[] wordFreq, int[] inputFreq) {
+        for (int i = 0; i < 26; i++) {
+            if (wordFreq[i] > inputFreq[i]) return false;
+        }
+        return true;
+    }
+    
+
+    public static ArrayList<String> findAnagramOrigins(List<String> words, HashMap<String, ArrayList<String>> dictionary) {
         ArrayList<String> origins = new ArrayList<>();
         for(String word:words){
             origins.addAll(dictionary.getOrDefault(word, new ArrayList<>()));
@@ -104,8 +101,9 @@ public class Main {
             String word = words.get(i);
             int[] alphabets = makeLetterArray(word);
 
-            String sortedWord = sortRandomWord(word);
-            alphaDict.put(sortedWord, alphabets);
+            // 💡： ここはソート済み！sortRandomWord不要。
+            // String sortedWord = sortRandomWord(word);
+            alphaDict.put(word, alphabets);
         }
 
         return alphaDict;

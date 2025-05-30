@@ -43,3 +43,31 @@ if (word.charAt(i).equals("a")){
 ```
 みたいなことしなくて良い！（学び）
 ---
+
+# 一回提出、larggeの実行時間が10分かかった...
+## パフォーマンス改善のために行うこと
+- すでにソート済みのwordをsortRandomWordしちゃってた → 消した
+```
+for(int i=0;i<words.size();i++){
+            String word = words.get(i);
+            int[] alphabets = makeLetterArray(word);
+
+            // 💡： ここはソート済み！sortRandomWord不要。
+            // String sortedWord = sortRandomWord(word);
+            alphaDict.put(word, alphabets);
+        }
+```
+
+- `entrySet()を使った`
+- 📌 https://qiita.com/neras_1215/items/e756089312bbd6c353a9
+- 便利すぎる。keySetから拾ってくるしかないのかと思ってた。
+
+```
+// 💡： これは無くして、`(Map.Entry<String, int[]> entry : alphaDict.entrySet()`でループ回せる
+        // ArrayList<String> keys = new ArrayList<>(alphaDict.keySet());
+        ArrayList<String> anagrams = new ArrayList<>();
+
+        for (Map.Entry<String, int[]> entry : alphaDict.entrySet()){
+            ...
+        }
+```
