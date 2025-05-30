@@ -7,9 +7,6 @@ import java.util.LinkedHashMap;
 
 // ❓ score_checker.pyってjavaで実装しないといけない系？？
 public class Main {
-    // スコア計算用配列（score_checker.pyと同じ）
-    private static final int[] SCORES = {1, 3, 2, 2, 1, 3, 3, 1, 1, 4, 4, 2, 2, 1, 1, 3, 4, 1, 1, 1, 2, 3, 3, 4, 3, 4};
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         HashMap<String, ArrayList<String>> dict = makeSortedDict(sc);
@@ -17,18 +14,6 @@ public class Main {
 
         solution("abnana", dict);
 
-    }
-
-    // 単語のスコアを計算
-    public static int calculateScore(String word) {
-        int score = 0;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            if ('a' <= c && c <= 'z') {
-                score += SCORES[c - 'a'];
-            }
-        }
-        return score;
     }
 
     public static void solution(String randomWord, HashMap<String, ArrayList<String>> dict) {
@@ -42,7 +27,7 @@ public class Main {
         String bestWord = null;
         int bestScore = -1;
         for (String s : origins) {
-            int score = calculateScore(s);
+            int score = ScoreChecker.calculateScore(s);
             if (score > bestScore) {
                 bestScore = score;
                 bestWord = s;
