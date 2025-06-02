@@ -16,9 +16,10 @@ import random, sys, time
 def calculate_hash(key):
     assert type(key) == str
     # Note: This is not a good hash function. Do you see why?
-    hash = 0
+    hash = 1
     for i in key:
-        hash += ord(i)
+        # 💡 += を *=にしたら、衝突が減ったのかびっくりするくらい早くなった！！！！！
+        hash *= ord(i) 
     return hash
 
 
