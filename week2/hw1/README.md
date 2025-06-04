@@ -16,6 +16,13 @@ Notionにメモ
   - オーバーフローが怖い...
 
 # ☑️ やること
+- 🌟 javaでも同様の実装をする！
+  - 📌 https://docs.oracle.com/javase/jp/8/docs/api/java/util/HashMap.html
+  - `containsKey()`
+  - `isEmpty()`
+  - `clear()`
+  - `getOrDefault()`
+  - `replace`
 - テーブルサイズを奇数（素数）にする
 - ハッシュの衝突を減らすため、ハッシュ関数を改良する
   - オーバーフロー対策する

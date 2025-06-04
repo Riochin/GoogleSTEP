@@ -19,7 +19,7 @@ def calculate_hash(key):
     hash = 1
     for i in key:
         # 💡 += を *=にしたら、衝突が減ったのかびっくりするくらい早くなった！！！！！
-        hash *= ord(i) 
+        hash = hash * ord(i) % 1000000009
     return hash
 
 
@@ -137,7 +137,7 @@ class HashTable:
 
                 # 💡 再ハッシュの確認
                 if self.item_count <= self.bucket_size * 0.3:
-                    self.rehash(self.bucket_size * 2)
+                    self.rehash(self.bucket_size // 2)
                 return True
             prev = item
             item = item.next
