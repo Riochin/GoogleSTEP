@@ -27,6 +27,7 @@ public class Main {
         ArrayList<WordInfo> anagrams = findAnagrams(sortedWord, dict);
 
         // スコア最大の単語を1つだけ出力
+        // 💡 scoreで先にソートしちゃう
         for (WordInfo wi : anagrams) {
             if (wi.score > bestScore) {
                 bestScore = wi.score;

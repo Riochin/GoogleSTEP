@@ -98,11 +98,14 @@ for(int i=0;i<words.size();i++){
   public static boolean canMake(int[] wordFreq, int[] inputFreq) {
     for (int i = 0; i < 26; i++) {
         if (wordFreq[i] > inputFreq[i]) return false;
-    }
+      }
     return true;
-}
+  }
   ```
     - 多分計算量には影響なし？
 
+# 授業中にもらったアドバイス
+- 最大順に並び替えたら、スコア最強が出てくるので比較が減る！
 
-# 最大順に並び替えたら、スコア最強が出てくるので比較が減る！
+# week 2 1 on1 
+- 自クラスの比較演算子を自前で作ってしまう
