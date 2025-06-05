@@ -2,7 +2,7 @@
 # 宿題３
 キャッシュの管理をほぼO(1)で実行できるデータ構造を考える
 
-# 考えたアルゴリズムたち
+# [考えたアルゴリズムたち](https://github.com/Riochin/GoogleSTEP/blob/main/week2/hw3/NOTE.md)
 
 - その１：キューを使う
   - 新しい要素が来たら詰める
