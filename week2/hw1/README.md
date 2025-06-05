@@ -3,6 +3,10 @@
 - ほぼO(1)で動くハッシュテーブルを自分で実装してみよう
 - [サンプルコード](https://github.com/xharaken/step2/blob/master/hash_table.py)あり
 
+# コード
+- ☕️ [Java版](https://github.com/Riochin/GoogleSTEP/tree/main/week2/hw1/java)（Python後に追加）
+- 🐍 [Python版](https://github.com/Riochin/GoogleSTEP/tree/main/week2/hw1/hash_table.py)
+
 ### ヒント
 Notionにメモ
 
