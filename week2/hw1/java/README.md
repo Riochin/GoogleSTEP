@@ -4,6 +4,9 @@
 - 型の確認
   - 📌 https://labex.io/ja/tutorials/java-how-to-print-variable-type-in-java-421459
 
+## 動作確認
+- `FunctionalTesut.java`を実行
+
 ## できていないこと
 - [1,true]というように、booleanも戻り値にもつgetの実装
 - `performanceTest.java`が正常に動作しない
