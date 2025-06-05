@@ -17,12 +17,18 @@ Notionにメモ
   - テーブルサイズ70%以上で2倍
   - テーブルサイズ30%以下で半分
 - `calculate_hash()`の += を *=にしたら、衝突が減ったのかびっくりするくらい早くなった！！
-  - オーバーフローが怖い...
+  - ~~オーバーフローが怖い...~~
+    - ✅ hash %= 1000000009 を追加  
+  - `containsKey()`
+  - `getValueArray`
+  - `getKeyArray`
 
 # ☑️ やること
-- 🌟 javaでも同様の実装をする！
+- 🌟 javaでも同様の実装をする！ → ほぼ完成！
+  - `performanceTest.java`が微妙...
+  
+- 追加したいメソッド
   - 📌 https://docs.oracle.com/javase/jp/8/docs/api/java/util/HashMap.html
-  - `containsKey()`
   - `isEmpty()`
   - `clear()`
   - `getOrDefault()`
