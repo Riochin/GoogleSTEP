@@ -5,11 +5,11 @@
 # 考えたアルゴリズムたち
 > リンク先に詳細があります
 
-- [その１：キューっぽくする](https://github.com/Riochin/GoogleSTEP/blob/main/week2/hw3/idea1_O(N).md)
+- [その１：キュー...?](https://github.com/Riochin/GoogleSTEP/blob/main/week2/hw3/idea1_O(N).md)
   - 新しい要素が来たらアクセス順配列を詰める
   - O(N)
  
-- その２：連結リストでキューの意思を継ぐ
+- [その２：連結リストでキューの意思を継ぐ](https://github.com/Riochin/GoogleSTEP/blob/main/week2/hw3/idea2_O(1).md)
   - 連結リストでデータのアクセス順を管理する
   - O(1)
 
