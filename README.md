@@ -12,3 +12,12 @@ This repository has homework that I submitted during the Google STEP Development
 | Week 6  | Tech talks & career talk                      |
 | Week 7  | How program works                             |
 | Week 8  | How computers work                            |
+
+# 記号について
+🌟： 重要ポイント
+✍️： 学び
+❓： 疑問点
+💡： 解決策（疑問点に対して）
+🧠： アイデア、工夫
+📌： 参考リンク・資料
+🔥： 反省点
