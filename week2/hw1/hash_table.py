@@ -142,8 +142,39 @@ class HashTable:
             prev = item
             item = item.next
         return (False)
+    
+   # 💡 追加で実装、ほぼgetと同じ！
+    def contains_key(self,key):
+        assert type(key) == str
+        bucket_index = calculate_hash(key) % self.bucket_size
+        item = self.buckets[bucket_index]
+        while item:
+            if item.key == key:
+                return True
+            item = item.next
+        return False
+    
+    # 💡 こっちも追加！バケットごとにみてvalueをappendした
+    def get_value_array(self):
+        values = []
+        for b in self.buckets:
+            item = b
+            while item:
+                values.append(item.value)
+                item = item.next
 
-        pass
+        return values
+    
+    # 💡 こっちも追加！
+    def get_key_array(self):
+        keys = []
+        for b in self.buckets:
+            item = b
+            while item:
+                keys.append(item.key)
+                item = item.next
+
+        return keys
 
     # Return the total number of items in the hash table.
     def size(self):
