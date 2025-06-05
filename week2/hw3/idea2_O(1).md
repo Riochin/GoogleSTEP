@@ -7,15 +7,41 @@
 - キャッシュ容量に到達した時は、一番最新アクセスが古いページから消す
 
 ## 💡 アルゴリズムの概要
-- `HashMap`+`LinkedList`を使う
-- `HashMap`は
+### データ構造
+- データ構造のクラス`Cache`は、
+  - `HashMap`
+  - `Page`をノードとしてもつ連結リスト
+  の2つをかけ合わせて構成され、
+
+
+- `HashMap map`は
   - key: url
-  - value: pageName
+  - value: Node
 - のそれぞれを持ち、実際のキャッシュメモリとして利用する
-- `LinkedList`は
-  - 最新アクセス先の`new`
-  - 最古アクセス先の`old`
-- それぞれのノードを両端に持ち、`old`->`new`にかけてサイトのアクセス順を保持する
+
+- `Page`は
+  - `Node prev`
+  - `Node next`
+  - `String url`
+  - `String name`
+- それぞれを持ち、
+  - `Node old`
+  - `Node new`
+- を更新することで最古・最新のアクセス履歴を記録する
+
+### メソッド
+- `Cache`がもつメソッド
+  - moveToNew(Page)
+    - いちどアクセスされたページが再び最新に行く時に使用
+    - `removePage(page)`→`addToNew(page)`で
+実行
+  - removePage(Page)
+    - ページを削除する際に使用
+    - 前後のPage同士を結び付ける作業を行う
+  - addToNew(Page)
+    - 履歴にないページにアクセスされた際に使用
+    - 既存の`new`と引数のPageを結び付ける
+    - `new`を置き換える
 
 ## 🔁 処理手順（ざっくり）
 1. 
