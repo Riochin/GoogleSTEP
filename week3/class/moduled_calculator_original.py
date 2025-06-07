@@ -5,8 +5,20 @@ def read_number(line, index):
     while index < len(line) and line[index].isdigit():
         number = number * 10 + int(line[index])
         index += 1
+    if line[index] == '.':
+        (decimal, index) = read_decimal(line, index + 1)
+        number += decimal
     token = {'type': 'NUMBER', 'number': number}
     return token, index
+
+def read_decimal(line, index):
+    number = 0
+    decimal = 0.1
+    while index < len(line) and line[index].isdigit():
+        number += int(line[index]) * decimal
+        decimal *= 0.1
+        index += 1
+    return number, index
 
 
 def read_plus(line, index):
