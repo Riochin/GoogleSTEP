@@ -20,7 +20,7 @@ public class HashTable {
         this.itemCount = 0;
     }
 
-    public void rehash(int newSize){
+    public void rehash(int newSize, int depth){
         Item[] oldBuckets = this.buckets;
         this.buckets = new Item[newSize];
         this.bucketSize = newSize;
@@ -28,7 +28,7 @@ public class HashTable {
 
         for(Item item :oldBuckets){
             while(item != null){
-                this.put(item.getKey(), item.getValue());
+                this.put(item.getKey(), item.getValue(),depth+1 );
                 item = item.getNext();
             }
         }
@@ -36,39 +36,50 @@ public class HashTable {
         return;
     }
 
-    public void checkSize(){
+    public void checkSize(int depth){
         if(this.itemCount <= this.bucketSize * 0.3){
-            this.rehash(this.bucketSize / 2);
+            this.rehash(this.bucketSize / 2, depth+1);
         } else if (this.itemCount >= this.bucketSize * 0.7){
-            this.rehash(this.bucketSize * 2);
+            this.rehash(this.bucketSize * 2,depth+1);
         }
 
         return;
     }
 
-    public boolean put(String key, int value){
+    public boolean put(String key, int value, int depth){
+        // System.out.println(depth);
+        // System.out.println("bucketSize"+this.bucketSize);
+        // System.out.println("itemCnt"+this.itemCount);
         assert key instanceof String; //カッコなしでもいけるんかーい
-        this.checkSize();
-        int bucketIdx = Math.floorMod(calculateHash(key), this.bucketSize);
+       
+        int bucketIdx = calculateHash(key) % this.bucketSize;
         Item item = this.buckets[bucketIdx];
 
+        // System.out.println("Whileの前");
         while (item != null){
+            // System.out.println(item + "をチェック中");
             if(item.getKey() == key){
                 item.setValue(value);
                 return false;
             }
             item = item.getNext();
         }
+        // System.out.println("whileの後");
         Item newItem = new Item(key, value, this.buckets[bucketIdx]);
         this.buckets[bucketIdx] = newItem;
         this.itemCount ++;
+
+        if (this.itemCount >= this.bucketSize * 0.7){
+            this.rehash(this.bucketSize*2,depth+1);
+        }
+        
 
         return true;
     }
 
     public int get(String key){
         assert key instanceof String;
-        int bucketIdx = Math.floorMod(calculateHash(key), this.bucketSize);
+        int bucketIdx = calculateHash(key) % this.bucketSize;
         Item item = this.buckets[bucketIdx];
 
         while (item != null){
@@ -78,16 +89,17 @@ public class HashTable {
         return -1;
     }
 
-    public boolean delete(String key){
+    public boolean delete(String key, int depth){
         assert key instanceof String;
 
-        this.checkSize();
-        int bucketIdx = Math.floorMod(calculateHash(key), this.bucketSize);
+        int bucketIdx = calculateHash(key) % this.bucketSize;
         Item item = this.buckets[bucketIdx];
         Item prev = null;
 
         while (item != null){
-            if(item.getKey() == key){
+            // System.out.println("います");
+            if(item.getKey().equals(key)){
+                // System.out.println("います");
                 if(prev == null){
                     this.buckets[bucketIdx] = item.getNext();
                 } else {
@@ -95,6 +107,9 @@ public class HashTable {
                 }
                 this.itemCount --;
 
+                if(this.itemCount <= this.bucketSize * 0.3){
+                    this.rehash(this.bucketSize/2,depth+1);
+                }
                 return true;
             }
             prev = item;
