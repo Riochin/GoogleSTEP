@@ -1,7 +1,3 @@
-# DONE
-- hw1
-- hw2
-- hw3
+# 電卓、公開しました！
+🔗 https://riochin.github.io/calculator/
 
-# TODO
-- hw4
