@@ -25,6 +25,13 @@ def read_minus(line, index):
     token = {'type': 'MINUS'}
     return token, index + 1
 
+def read_times(line, index):
+    token = {'type': 'TIMES' }
+    return token, index + 1
+
+def read_divides(line, index):
+    token = {'type': 'DIVIDES'}
+    return token, index + 1
 
 def tokenize(line):
     tokens = []
@@ -36,6 +43,12 @@ def tokenize(line):
             (token, index) = read_plus(line, index)
         elif line[index] == '-':
             (token, index) = read_minus(line, index)
+        elif line[index] == '/':
+            (token, index) = read_divides(line, index)
+        elif line[index] == '*':
+            (token, index) = read_times(line, index)
+        elif line[index] == ' ': # 💡 スペースはスキップしちゃう
+            index += 1
         else:
             print('Invalid character found: ' + line[index])
             exit(1)
@@ -44,15 +57,41 @@ def tokenize(line):
 
 
 def evaluate(tokens):
+    i = 0
+    processed_tokens = []
+
+    # 💡 先に積・商！
+    while i < len(tokens):
+        # print(tokens[i])
+        if tokens[i]['type'] == 'TIMES':
+            last_number_token = processed_tokens.pop()
+            result = last_number_token['number'] * tokens[i+1]['number']
+            processed_tokens.append({'type': 'NUMBER', 'number':result})
+            i += 2
+        elif tokens[i]['type'] =='DIVIDES':
+            last_number_token = processed_tokens.pop()
+            if tokens[i+1]['number'] == 0: # 💡ゼロ除算を防ぐ
+                print("Error: Division by zero!!")
+                exit(1)
+            result = last_number_token['number'] / tokens[i+1]['number']
+            processed_tokens.append({'type': 'NUMBER', 'number': result})
+            i += 2
+        else: # 乗算・除算以外のトークンはそのまま追加
+            processed_tokens.append(tokens[i])
+            i += 1
+
+    # 💡 次に加算・減算
+    processed_tokens.insert(0, {'type':'PLUS'})
     answer = 0
-    tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     index = 1
-    while index < len(tokens):
-        if tokens[index]['type'] == 'NUMBER':
-            if tokens[index - 1]['type'] == 'PLUS':
-                answer += tokens[index]['number']
-            elif tokens[index - 1]['type'] == 'MINUS':
-                answer -= tokens[index]['number']
+
+    while index < len(processed_tokens):
+        # print(tokens[index])
+        if processed_tokens[index]['type'] == 'NUMBER':
+            if processed_tokens[index - 1]['type'] == 'PLUS':
+                answer += processed_tokens[index]['number']
+            elif processed_tokens[index - 1]['type'] == 'MINUS':
+                answer -= processed_tokens[index]['number']
             else:
                 print('Invalid syntax')
                 exit(1)
@@ -71,10 +110,20 @@ def test(line):
 
 
 # Add more tests to this function :)
+# hw2
 def run_test():
     print("==== Test started! ====")
     test("1+2")
     test("1.0+2.1-3")
+    test("2*3")          # 新しいテスト
+    test("6/2")          # 新しいテスト
+    test("1+2*3")       # 優先順位のテスト
+    test("10-4/2")      # 優先順位のテスト
+    test("5*2+3")       # 優先順位のテスト
+    test("10/2-1")      # 優先順位のテスト
+    test("1+2*3-4/2") # 複合テスト
+    test("7+5*2-12/3+1")
+    test("0/0") # ゼロ除算テスト（エラーになることを期待）
     print("==== Test finished! ====\n")
 
 run_test()
