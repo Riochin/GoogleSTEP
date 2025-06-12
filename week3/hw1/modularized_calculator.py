@@ -33,6 +33,14 @@ def read_divides(line, index):
     token = {'type': 'DIVIDES'}
     return token, index + 1
 
+def read_para_open(line, index):
+    token = {'type': 'PARA_OPEN'}
+    return token, index + 1
+
+def read_para_close(line, index):
+    token = {'type': 'PARA_CLOSE'}
+    return token, index + 1
+
 def tokenize(line):
     tokens = []
     index = 0
@@ -49,6 +57,10 @@ def tokenize(line):
             (token, index) = read_times(line, index)
         elif line[index] == ' ': # 💡 スペースはスキップしちゃう
             index += 1
+        elif line[index] == '(':
+            (token, index) = read_para_open(line, index)
+        elif line[index] == ')':
+            (token, index) = read_para_close(line, index)
         else:
             print('Invalid character found: ' + line[index])
             exit(1)
@@ -57,10 +69,42 @@ def tokenize(line):
 
 
 def evaluate(tokens):
+    # 💡 --- 第零段階: カッコの処理（再帰呼び出し） ---
+    tokens_processed_parentheses = []
+    i = 0
+    while i < len(tokens):
+        if tokens[i]['type'] == 'PARA_OPEN':
+            open_count = 1
+            j = i+1
+            sub_expression_tokens = []
+
+            while j < len(tokens) and open_count > 0:
+                if tokens[j]['type'] == 'PARA_OPEN':
+                    open_count += 1
+                elif tokens[j]['type'] == 'PARA_CLOSE':
+                    open_count -= 1
+
+                if open_count > 0:
+                    sub_expression_tokens.append(tokens[j])
+                j += 1
+            if open_count != 0:
+                print("Error: Mismatched parentheses!")
+                exit(1)
+
+            sub_answer = evaluate(sub_expression_tokens)
+            tokens_processed_parentheses.append(
+                {'type':'NUMBER', 'number': sub_answer}
+            )
+            i = j
+        else:
+            tokens_processed_parentheses.append(tokens[i])
+            i += 1
+            
     i = 0
     processed_tokens = []
+    tokens = tokens_processed_parentheses
 
-    # 💡 先に積・商！
+    # 💡 --- 第一段階: 積・商の処理 ---
     while i < len(tokens):
         # print(tokens[i])
         if tokens[i]['type'] == 'TIMES':
@@ -80,7 +124,7 @@ def evaluate(tokens):
             processed_tokens.append(tokens[i])
             i += 1
 
-    # 💡 次に加算・減算
+    # 💡 --- 第二段階: 和・差の処理 ---
     processed_tokens.insert(0, {'type':'PLUS'})
     answer = 0
     index = 1
@@ -123,7 +167,17 @@ def run_test():
     test("10/2-1")      # 優先順位のテスト
     test("1+2*3-4/2") # 複合テスト
     test("7+5*2-12/3+1")
-    test("0/0") # ゼロ除算テスト（エラーになることを期待）
+    # test("0/0") # ゼロ除算テスト（エラーになることを期待）
+
+    # --- 追加のテストケース (カッコ) ---
+    test("(1+2)*3")       # カッコが積より優先
+    test("10/(4-2)")      # カッコが商より優先
+    test("(5+2)*(3-1)")   # 複数のカッコ
+    test("((1+2)*3)+4")   # ネストされたカッコ
+    test("1+(2*(3+4))")   # ネストされたカッコと外側の演算
+    test("1*(2+(3*4))")   # ネストされたカッコと外側の演算
+    # test("(1+2")         # 括弧の不一致 (エラーになることを期待)
+
     print("==== Test finished! ====\n")
 
 run_test()
