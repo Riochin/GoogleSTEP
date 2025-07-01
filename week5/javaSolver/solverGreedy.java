@@ -1,4 +1,4 @@
-package java;
+package javaSolver;
 import java.util.Arrays;
 
 public class solverGreedy {

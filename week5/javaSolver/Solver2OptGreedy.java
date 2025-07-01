@@ -1,4 +1,4 @@
-package java;
+package javaSolver;
 
 // 2-opt greedy solver 2025/07/02
 // 第１弾！！！！！！
@@ -135,44 +135,59 @@ public class Solver2OptGreedy {
     }
     
     /*
-     2-opt改善を適用
+     2-opt改善を適用（局所距離計算版）
      */
     public static int[] improve2Opt(int[] tour, double[][] cities) {
         int N = tour.length;
+        
+        // 距離行列を事前計算
+        double[][] dist = new double[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = i; j < N; j++) {
+                dist[i][j] = dist[j][i] = distance(cities[i], cities[j]);
+            }
+        }
+        
         boolean improved = true;
         int[] currentTour = tour.clone();
         int iteration = 0;
-        int maxIterations = Math.min(100, N); // 最大反復数を設定
+        int improvementCount = 0;
         
         System.err.println("Starting 2-opt improvement...");
-        double initialDist = calculateTotalDistance(currentTour, cities);
+        double currentDist = calculateTotalDistance(currentTour, cities);
+        double initialDist = currentDist;
         System.err.printf("Initial distance: %.2f\n", initialDist);
         
-        int lastDisplayedPercent = -1;
-        
-        while (improved && iteration < maxIterations) {
+        while (improved) {
             improved = false;
             iteration++;
-            double currentDist = calculateTotalDistance(currentTour, cities);
-            
-            // 進行率を計算（0-100%）
-            int currentPercent = (int) ((double) iteration / maxIterations * 100);
-            
-            // 5%刻みまたは完了時に進行バーを表示
-            if (currentPercent != lastDisplayedPercent && (currentPercent % 5 == 0 || iteration == maxIterations)) {
-                printProgressBar("2-opt: ", iteration, maxIterations, 25);
-                lastDisplayedPercent = currentPercent;
-            }
             
             for (int i = 0; i < N - 1; i++) {
                 for (int j = i + 2; j < N; j++) {
-                    int[] newTour = twoOptSwap(currentTour, i, j);
-                    double newDist = calculateTotalDistance(newTour, cities);
+                    // 現在の2つの辺：i→i+1 と j→j+1 (j+1はN-1の場合は0)
+                    int a1 = currentTour[i];
+                    int a2 = currentTour[i + 1];
+                    int b1 = currentTour[j];
+                    int b2 = currentTour[(j + 1) % N];
                     
-                    if (newDist < currentDist) {
-                        currentTour = newTour;
+                    // 元々の距離：a1→a2 + b1→b2
+                    double oldDistance = dist[a1][a2] + dist[b1][b2];
+                    
+                    // 交換後の距離：a1→b1 + a2→b2
+                    double newDistance = dist[a1][b1] + dist[a2][b2];
+                    
+                    // 改善があるかチェック（局所計算のみ）
+                    if (newDistance < oldDistance) {
+                        // 2-opt交換を実行
+                        currentTour = twoOptSwap(currentTour, i, j);
+                        
+                        // 全体距離を局所的に更新
+                        currentDist = currentDist - oldDistance + newDistance;
+                        
                         improved = true;
-                        System.err.printf("Iteration %d: Improved! Distance: %.2f\n", iteration, newDist);
+                        improvementCount++;
+                        System.err.printf("Iteration %d: Improved! Distance: %.2f (改善数: %d)\n", 
+                                        iteration, currentDist, improvementCount);
                         break;
                     }
                 }
@@ -183,14 +198,9 @@ public class Solver2OptGreedy {
             }
         }
         
-        // 最終的な100%表示を確実に行う
-        if (lastDisplayedPercent != 100) {
-            printProgressBar("2-opt: ", maxIterations, maxIterations, 25);
-        }
-        
-        double finalDist = calculateTotalDistance(currentTour, cities);
-        System.err.printf("2-opt completed! Final distance: %.2f (%.1f%% improvement)\n", 
-                         finalDist, (initialDist - finalDist) / initialDist * 100);
+        double finalDist = currentDist; // 既に正確に計算済み
+        System.err.printf("2-opt completed! Final distance: %.2f (%.1f%% improvement, %d improvements)\n", 
+                         finalDist, (initialDist - finalDist) / initialDist * 100, improvementCount);
         return currentTour;
     }
     
