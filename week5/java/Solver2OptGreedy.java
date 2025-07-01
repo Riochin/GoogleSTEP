@@ -1,3 +1,9 @@
+package java;
+
+// 2-opt greedy solver 2025/07/02
+// 第１弾！！！！！！
+// 3,418.10,	3,832.29,	5,232.96,	9,227.71,	11,511.53,	21,513.95,	48,645.15
+
 import java.io.*;
 import java.util.*;
 
